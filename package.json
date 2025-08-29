@@ -2,6 +2,13 @@
   "name": "bfhl-api",
   "version": "1.0.0",
   "description": "BFHL REST API",
-  "scripts": {},
-  "dependencies": {}
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "body-parser": "^1.20.2"
+  }
 }

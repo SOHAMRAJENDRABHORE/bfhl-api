@@ -1,10 +1,17 @@
-// --- Change these 4 constants to YOUR details ---
-const FULL_NAME = "soham_rajendra_bhore";       // lowercase with underscore
-const DOB_DDMMYYYY = "18052003";    // ddmmyyyy
+import express from "express";
+import bodyParser from "body-parser";
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+app.use(bodyParser.json());
+
+// Your bfhl logic (copied from bfhl.js)
+const FULL_NAME = "soham_rajendra_bhore";
+const DOB_DDMMYYYY = "18052003";
 const EMAIL = "sohamrajendra.bhore2022@vitstudent.ac.in";
 const ROLL_NUMBER = "22BLC1146";
 
-// Helpers
 const isNumeric = (s) => typeof s === "string" && /^[0-9]+$/.test(s);
 const isAlphabet = (s) => typeof s === "string" && /^[a-zA-Z]+$/.test(s);
 
@@ -14,11 +21,7 @@ const alternateCaps = (s) =>
     .map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
     .join("");
 
-export default function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ is_success: false, message: "Only POST /bfhl allowed" });
-  }
-
+app.post("/bfhl", (req, res) => {
   try {
     const body = req.body || {};
     const data = Array.isArray(body.data) ? body.data : null;
@@ -40,18 +43,17 @@ export default function handler(req, res) {
       if (isNumeric(item)) {
         const n = parseInt(item, 10);
         sum += n;
-        (n % 2 === 0 ? even_numbers : odd_numbers).push(item); // keep as strings
+        (n % 2 === 0 ? even_numbers : odd_numbers).push(item);
       } else if (isAlphabet(item)) {
-        alphabets.push(item.toUpperCase()); // keep token whole, to UPPER
+        alphabets.push(item.toUpperCase());
       } else {
         special_characters.push(item);
       }
     }
 
-    // Build concat_string from all alphabet characters (no separators), reversed, alternating caps
-    const joinedAlpha = alphabets.join("");                  // e.g. ["A","ABCD","DOE"] -> "AABCDDOE"
-    const reversed = joinedAlpha.split("").reverse().join(""); // -> "EODDCBAA"
-    const concat_string = alternateCaps(reversed);             // -> "EoDdCbAa"
+    const joinedAlpha = alphabets.join("");
+    const reversed = joinedAlpha.split("").reverse().join("");
+    const concat_string = alternateCaps(reversed);
 
     return res.status(200).json({
       is_success: true,
@@ -66,6 +68,16 @@ export default function handler(req, res) {
       concat_string,
     });
   } catch (err) {
-    return res.status(500).json({ is_success: false, message: "Internal Server Error" });
+    return res
+      .status(500)
+      .json({ is_success: false, message: "Internal Server Error" });
   }
-}
+});
+
+app.get("/", (req, res) => {
+  res.send("BFHL API is running 🚀");
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
