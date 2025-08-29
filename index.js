@@ -1,12 +1,9 @@
 import express from "express";
-import bodyParser from "body-parser";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
 
-app.use(bodyParser.json());
-
-// Your bfhl logic (copied from bfhl.js)
+// --- Change these 4 constants to YOUR details ---
 const FULL_NAME = "soham_rajendra_bhore";
 const DOB_DDMMYYYY = "18052003";
 const EMAIL = "sohamrajendra.bhore2022@vitstudent.ac.in";
@@ -14,13 +11,10 @@ const ROLL_NUMBER = "22BLC1146";
 
 const isNumeric = (s) => typeof s === "string" && /^[0-9]+$/.test(s);
 const isAlphabet = (s) => typeof s === "string" && /^[a-zA-Z]+$/.test(s);
-
 const alternateCaps = (s) =>
-  s
-    .split("")
-    .map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
-    .join("");
+  s.split("").map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase())).join("");
 
+// POST /bfhl route
 app.post("/bfhl", (req, res) => {
   try {
     const body = req.body || {};
@@ -33,10 +27,7 @@ app.post("/bfhl", (req, res) => {
       });
     }
 
-    const even_numbers = [];
-    const odd_numbers = [];
-    const alphabets = [];
-    const special_characters = [];
+    const even_numbers = [], odd_numbers = [], alphabets = [], special_characters = [];
     let sum = 0;
 
     for (const item of data) {
@@ -68,16 +59,9 @@ app.post("/bfhl", (req, res) => {
       concat_string,
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ is_success: false, message: "Internal Server Error" });
+    return res.status(500).json({ is_success: false, message: "Internal Server Error" });
   }
 });
 
-app.get("/", (req, res) => {
-  res.send("BFHL API is running 🚀");
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
